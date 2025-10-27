@@ -1,43 +1,74 @@
 package com.ecom.serviceImpl;
 
+import com.ecom.dto.UserRequest;
+import com.ecom.dto.UserResponse;
+import com.ecom.entity.Address;
 import com.ecom.entity.User;
+import com.ecom.mapper.UserMapper;
+import com.ecom.repository.UserRepository;
 import com.ecom.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    List<User> users=new ArrayList<>();
-   private Long nextId=1L;
+    private final UserRepository userRepository;
+
     @Override
-    public String addUser(User user) {
-        user.setId(nextId++);
-         users.add(user);
-         return "user add successfully";
+    public UserResponse addUser(UserRequest userRequest) {
+        User user=UserMapper.userRequest(userRequest);
+        User response=  userRepository.save(user);
+        return UserMapper.userResponse(response);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return users;
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(UserMapper::userResponse).toList();
     }
 
     @Override
-    public Optional<User> getUser(Long id) {
-       return users.stream().filter(user -> user.getId().equals(id)).findFirst();
+    public UserResponse getUser(Long id) {
+        return UserMapper.userResponse(userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found with"+id)));
     }
 
     @Override
-    public boolean updateUser(Long id, User user) {
-        return users.stream().filter(user1-> user1.getId().equals(id))
-                .findFirst().map(user1 -> {
-            user1.setFirstName(user.getFirstName());
-            user1.setLastName(user.getLastName());
-            return true;
-        }).orElse(false);
+    public UserResponse updateUser(Long id, UserRequest userRequest) {
+        // Fetch the user from DB
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
+        // Update basic details
+        existingUser.setFirstName(userRequest.getFirstName());
+        existingUser.setLastName(userRequest.getLastName());
+        existingUser.setEmail(userRequest.getEmail());
+        existingUser.setPhoneNumber(userRequest.getPhoneNumber());
+
+        // Update role if provided
+        if (userRequest.getRole() != null) {
+            existingUser.setRole(userRequest.getRole());
+        }
+
+        // Update address if provided
+        if (userRequest.getAddress() != null) {
+            Address address = existingUser.getAddress();
+            if (address == null) {
+                address = new Address();
+            }
+            address.setStreet(userRequest.getAddress().getStreet());
+            address.setCity(userRequest.getAddress().getCity());
+            address.setState(userRequest.getAddress().getState());
+            address.setCountry(userRequest.getAddress().getCountry());
+            existingUser.setAddress(address);
+        }
+
+        // Save updated entity
+        User updatedUser = userRepository.save(existingUser);
+
+        // Convert entity to response DTO
+        return UserMapper.userResponse(updatedUser);
     }
+
 
 }

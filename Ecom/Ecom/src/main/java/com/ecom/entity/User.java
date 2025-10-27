@@ -1,36 +1,36 @@
 package com.ecom.entity;
 
-
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
+@Entity
 public class User {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
+    private String email;
+    private String phoneNumber;
+    private Role role=Role.CUSTOMER;
 
-    public String getFirstName() {
-        return firstName;
-    }
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @JoinColumn(name = "address_id",referencedColumnName = "id")
+    private  Address address;
+   @CreationTimestamp
+    private LocalDateTime createdAt;
+   @UpdateTimestamp
+    private  LocalDateTime updatedAt;
 
-    public String getLastName() {
-        return lastName;
-    }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }
