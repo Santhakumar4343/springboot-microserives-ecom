@@ -10,4 +10,7 @@ public interface ProductService {
     public  ProductResponse getProduct(Long id);
     public List<ProductResponse> getAllProducts();
     public ProductResponse updatedProduct(Long id, ProductRequest productRequest) ;
+    public boolean deleteProduct(Long id);
+
+    public List<ProductResponse> searchProducts(String keyword);
 }

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/products/v1")
 @RequiredArgsConstructor
@@ -27,5 +29,14 @@ public class ProductController {
     @PutMapping("/update/{id}")
     public  ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest){
         return  ResponseEntity.ok(productService.updatedProduct(id,productRequest));
+    }
+    @DeleteMapping("/delete/{id}")
+    public  ResponseEntity<?> deleteProduct(@PathVariable Long id){
+             productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProducts(@RequestParam String keyword){
+        return  ResponseEntity.ok(productService.searchProducts(keyword));
     }
 }

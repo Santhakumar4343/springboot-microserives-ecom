@@ -15,30 +15,46 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+
     @Override
     public ProductResponse addProduct(ProductRequest productRequest) {
-         Product product =new Product();
-
-        Product response= productRepository.save(ProductMapper.dtoToEntity(product,productRequest));
+        Product product = new Product();
+        Product response = productRepository.save(ProductMapper.dtoToEntity(product, productRequest));
         return ProductMapper.entityToDto(response);
     }
 
     @Override
     public ProductResponse getProduct(Long id) {
-        Product product=productRepository.findById(id).orElseThrow(()->new RuntimeException("Product not found with id"+id));
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found with id" + id));
         return ProductMapper.entityToDto(product);
     }
 
     @Override
     public List<ProductResponse> getAllProducts() {
-               return productRepository.findAll().stream().map(ProductMapper::entityToDto).toList();
+        return productRepository.findAll().stream().map(ProductMapper::entityToDto).toList();
     }
 
     @Override
     public ProductResponse updatedProduct(Long id, ProductRequest productRequest) {
-        Product existing=productRepository.findById(id).orElseThrow(()->new RuntimeException("Product not found with id"+id));
+        Product existing = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found with id" + id));
 
-       Product product= productRepository.save(ProductMapper.dtoToEntity(existing,productRequest));
+        Product product = productRepository.save(ProductMapper.dtoToEntity(existing, productRequest));
         return ProductMapper.entityToDto(product);
+    }
+
+    @Override
+    public boolean deleteProduct(Long id) {
+        return productRepository.findById(id).map(
+                product -> {
+                    product.setActive(false);
+                    productRepository.save(product);
+                    return  true;
+                }
+        ).orElse(false);
+    }
+
+    @Override
+    public List<ProductResponse> searchProducts(String keyword) {
+        return productRepository.searchProducts(keyword).stream().map(ProductMapper::entityToDto).toList();
     }
 }

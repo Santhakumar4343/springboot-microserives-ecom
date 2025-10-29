@@ -19,18 +19,14 @@ public class User {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private Role role=Role.CUSTOMER;
-
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
-
-
-
-    @JoinColumn(name = "address_id",referencedColumnName = "id")
-    private  Address address;
-   @CreationTimestamp
+    private Role role = Role.CUSTOMER;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+    @CreationTimestamp
     private LocalDateTime createdAt;
-   @UpdateTimestamp
-    private  LocalDateTime updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 
 }
