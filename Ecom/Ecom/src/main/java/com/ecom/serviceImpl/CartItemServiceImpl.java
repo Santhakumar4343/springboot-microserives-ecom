@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,5 +66,17 @@ public class CartItemServiceImpl implements CartItemService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<CartItem> getFromCart(Long userId) {
+        return cartItemRepository.findByUserId(userId);
+    }
+
+    @Override
+    public void deleteByUser(Long userId) {
+        userRepository.findById(userId).ifPresent(
+            cartItemRepository::deleteByUser
+        );
     }
 }
