@@ -1,10 +1,12 @@
 package com.ecom.serviceImpl;
 
 import com.ecom.dto.OrderResponse;
-import com.ecom.entity.*;
-import com.ecom.mapper.ProductMapper;
+import com.ecom.entity.CartItem;
+import com.ecom.entity.Order;
+import com.ecom.entity.OrderItem;
+import com.ecom.entity.OrderStatus;
+import com.ecom.mapper.OrderMapper;
 import com.ecom.repository.OrderRepository;
-import com.ecom.repository.UserRepository;
 import com.ecom.service.CartItemService;
 import com.ecom.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +20,16 @@ import java.util.Optional;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CartItemService cartItemService;
-    private final UserRepository userRepository;
+
 
     @Override
     public Optional<OrderResponse> createOrder(Long userId) {
         //Check user
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-          return Optional.empty();
-        }
-        User user = userOptional.get();
+//        Optional<User> userOptional = userRepository.findById(userId);
+//        if (userOptional.isEmpty()) {
+//          return Optional.empty();
+//        }
+//        User user = userOptional.get();
         //check cart items
         List<CartItem> cartItem = cartItemService.getFromCart(userId);
         if (cartItem.isEmpty()) {
@@ -38,14 +40,14 @@ public class OrderServiceImpl implements OrderService {
 
         //create order
         Order order = new Order();
-        order.setUser(user);
+        order.setUserId(userId);
         order.setPrice(totalPrice);
         order.setOrderStatus(OrderStatus.CONFIRMED);
         List<OrderItem> orderItemList = cartItem.stream().map(
                 item ->
                      new OrderItem(
                             null,
-                            item.getProduct(),
+                            item.getProductId(),
                             item.getQuantity(),
                             item.getPrice(),
                             order
@@ -55,6 +57,6 @@ public class OrderServiceImpl implements OrderService {
        Order savedOrder= orderRepository.save(order);
         //clear cart
         cartItemService.deleteByUser(userId);
-     return Optional.of(ProductMapper.OrderMapper.entityToDto(savedOrder));
+     return Optional.of(OrderMapper.entityToDto(savedOrder));
     }
 }

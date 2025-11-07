@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Config-Demo
+build:
+  id: 1.1.1
+  name: "dev build"
+  version: "dev version"
+  type : "development"

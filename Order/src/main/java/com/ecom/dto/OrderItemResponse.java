@@ -1,0 +1,11 @@
+package com.ecom.dto;
+
+import lombok.Data;
+
+@Data
+public class OrderItemResponse {
+    private  Long id;
+    private Long productId;
+    private Integer quantity;
+    private Double price;
+}
