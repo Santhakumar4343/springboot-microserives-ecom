@@ -5,7 +5,6 @@ import com.ecom.dto.ProductRequest;
 import com.ecom.dto.ProductResponse;
 import com.ecom.entity.Product;
 
-import java.util.stream.Collectors;
 
 public class ProductMapper {
     public static Product dtoToEntity(Product product, ProductRequest productRequest) {

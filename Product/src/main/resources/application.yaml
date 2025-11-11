@@ -1,6 +1,6 @@
 spring:
   application:
-    name: User
+    name: Product
   datasource:
     username: root
     password: 1234
@@ -16,3 +16,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
 server:
   port: 8083
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
