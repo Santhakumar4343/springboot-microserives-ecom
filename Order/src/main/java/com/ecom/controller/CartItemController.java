@@ -5,6 +5,7 @@ import com.ecom.entity.CartItem;
 import com.ecom.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +17,30 @@ import java.util.List;
 public class CartItemController {
     private  final CartItemService cartItemService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?>  addToCart(@RequestHeader("X-User-ID") Long userId, @RequestBody CartItemRequest cartItemRequest){
-        boolean response=cartItemService.addToCart(userId,cartItemRequest);
-        if(!response){
-            return  ResponseEntity.badRequest().body("user not found or product not found or out of stock ");
+//    @PostMapping("/add")
+//    public ResponseEntity<?>  addToCart(@RequestHeader("X-User-ID") Long userId, @RequestBody CartItemRequest cartItemRequest){
+//        boolean response=cartItemService.addToCart(userId,cartItemRequest);
+//        if(!response){
+//            return  ResponseEntity.badRequest().body("user not found or product not found or out of stock ");
+//        }
+//        return  ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addToCart(
+            @RequestHeader("X-User-ID") Long userId,
+            @RequestBody CartItemRequest cartItemRequest) {
+
+        boolean response = cartItemService.addToCart(userId, cartItemRequest);
+
+        if (!response) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("user not found or product not found or out of stock");
         }
-        return  ResponseEntity.status(HttpStatus.CREATED).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
     @DeleteMapping("/delete/{productId}")
     public  ResponseEntity<?> deleteFromCart(@RequestHeader("X-User-ID") Long userId,@PathVariable Long productId){
         boolean deleted =cartItemService.deleteProductFromCart(userId,productId);

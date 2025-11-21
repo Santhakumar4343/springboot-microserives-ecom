@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      # Routes belong directly here
+      routes:
+        - id: user-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/user/v1/**
+        - id: product-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/products/v1/**
+        - id: order-cart-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/orders/v1/**,/cart/v1/**
+
+#logging:
+#  level:
+#    root: info
+#    org.springframework.cloud.gateway: TRACE
+#    org.springframework.cloud.gateway.route.RouterDefinitionLocator: info
+#    org.springframework.http.server.reactive: DEBUG

@@ -20,4 +20,13 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+logging:
+  level:
+    root: INFO
+  file:
+    name: logs/${spring.application.name}
+  logback:
+    rollingpolicy:
+      max-file-size: 5mb
+      max-history: 7
 

@@ -8,6 +8,9 @@ import com.ecom.mapper.UserMapper;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
+private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Override
     public UserResponse addUser(UserRequest userRequest) {
         User user= UserMapper.userRequest(userRequest);
@@ -30,6 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(Long id) {
+        log.info("Received info id is : {}",id);
+        log.warn("Received warn id is : {}",id);
+        log.debug("Received debug id is : {}",id);
+        log.error("Received error id is : {}",id);
+        log.trace("Received trace id is : {}",id);
+
         return UserMapper.userResponse(userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found with"+id)));
     }
 
