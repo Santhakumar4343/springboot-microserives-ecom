@@ -3,6 +3,7 @@ package com.ecom.controller;
 import com.ecom.dto.CartItemRequest;
 import com.ecom.entity.CartItem;
 import com.ecom.service.CartItemService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,28 +18,13 @@ import java.util.List;
 public class CartItemController {
     private  final CartItemService cartItemService;
 
-//    @PostMapping("/add")
-//    public ResponseEntity<?>  addToCart(@RequestHeader("X-User-ID") Long userId, @RequestBody CartItemRequest cartItemRequest){
-//        boolean response=cartItemService.addToCart(userId,cartItemRequest);
-//        if(!response){
-//            return  ResponseEntity.badRequest().body("user not found or product not found or out of stock ");
-//        }
-//        return  ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
-    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addToCart(
-            @RequestHeader("X-User-ID") Long userId,
-            @RequestBody CartItemRequest cartItemRequest) {
-
-        boolean response = cartItemService.addToCart(userId, cartItemRequest);
-
-        if (!response) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("user not found or product not found or out of stock");
+    @PostMapping("/add")
+    public ResponseEntity<?>  addToCart(@RequestHeader("X-User-ID") Long userId, @RequestBody CartItemRequest cartItemRequest){
+        boolean response=cartItemService.addToCart(userId,cartItemRequest);
+        if(!response){
+            return  ResponseEntity.badRequest().body("user not found or product not found or out of stock ");
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return  ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/delete/{productId}")

@@ -8,6 +8,8 @@ import com.ecom.repository.CartItemRepository;
 import com.ecom.service.CartItemService;
 import com.ecom.servicecommunication.ProductFeignClient;
 import com.ecom.servicecommunication.UserFeignClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,13 +24,13 @@ public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
     private final UserFeignClient userFeignClient;
     private final ProductFeignClient productFeignClient;
-
-
+    int attempts=0;
+//    @CircuitBreaker(name = "orderService",fallbackMethod = "addToCartFallBack")
+    @Retry(name = "orderService",fallbackMethod = "addToCartFallBack")
     @Override
     public Boolean addToCart(Long userId, CartItemRequest cartItemRequest) {
-
+        System.out.println("Attempt Count"+(++attempts));
         ProductResponse productOptional = productFeignClient.getProductById(cartItemRequest.getProductId());
-        System.out.println("************************"+productOptional+"********"+cartItemRequest.getProductId());
         if (productOptional == null) {
             return false;
         }
@@ -54,6 +56,11 @@ public class CartItemServiceImpl implements CartItemService {
             cartItemRepository.save(cartItem);
         }
         return true;
+    }
+    public Boolean addToCartFallBack(Long userId,CartItemRequest cartItemRequest,Exception exception){
+
+               exception.getStackTrace();
+               return false;
     }
 
     @Override
