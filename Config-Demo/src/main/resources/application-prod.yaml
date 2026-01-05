@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Config-Demo
+    name: configdemo
 build:
   id: 2.2.2
   name: "production build"

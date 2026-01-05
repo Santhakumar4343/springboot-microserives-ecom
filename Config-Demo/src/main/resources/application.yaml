@@ -1,10 +1,19 @@
 spring:
   application:
-    name: Config-Demo
+    name: configdemo
   profiles:
     active: dev
+  config:
+    import: optional:configserver:http://localhost:8089
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
 build:
   id: 1.0.0
   name: "default build"
   version: "default version"
-  type : "default"
+  type: "default"
